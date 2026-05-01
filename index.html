@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encarte Online - Supermercado Alegria</title>
+    <style>
+        /* Estilização Geral */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #f4f4f4;
+            color: #333;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 200px; /* Espaço para a barra de checkout */
+        }
+
+        .banner {
+            width: 100%;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            border-bottom: 3px solid #d62828;
+        }
+
+        .banner img {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .container {
+            width: 100%;
+            padding: 10px 15px;
+        }
+
+        .categoria-titulo {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 12px 15px;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            margin: 25px 0 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .grid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+            .container { padding: 20px 30px; }
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            justify-content: space-between;
+            border: 1px solid #eee;
+        }
+
+        .card img {
+            width: 100%;
+            height: 120px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .card h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            height: 38px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            line-height: 1.2;
+        }
+
+        .preco-box {
+            background: #d62828;
+            color: #fff;
+            padding: 8px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .qty-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+
+        .btn-qty {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qty-input {
+            width: 60px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            height: 32px;
+            font-size: 0.9rem;
+            background: #fff;
+        }
+
+        .btn-add {
+            background: #25D366;
+            color: #fff;
+            border: none;
+            padding: 12px 5px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        /* Camada de Cadastro e Checkout */
+        .checkout-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #fff;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+            padding: 15px;
+            z-index: 1000;
+            border-top: 4px solid #25D366;
+        }
+
+        .customer-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .customer-form input, .customer-form select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            width: 100%;
+        }
+
+        .full-width { grid-column: span 2; }
+
+        .checkout-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        .total-info h4 { font-size: 0.75rem; color: #666; }
+        .total-price { font-size: 1.25rem; font-weight: 800; color: #1a1a1a; }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .badge {
+            background: #d62828;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="banner">
+        <img src="https://thwhpqfvxssapltgiall.supabase.co/storage/v1/object/public/products/Gemini_Generated_Image_dec4m9dec4m9dec4.png" alt="Banner Supermercado">
+    </div>
+
+    <div class="container">
+        <h2 class="categoria-titulo">Açougue (KG)</h2>
+        <div class="grid" id="grid-acougue"></div>
+
+        <h2 class="categoria-titulo">Mercearia (Unidade)</h2>
+        <div class="grid" id="grid-mercearia"></div>
+
+        <h2 class="categoria-titulo">Limpeza (Unidade)</h2>
+        <div class="grid" id="grid-limpeza"></div>
+
+        <h2 class="categoria-titulo">Frios (Unidade)</h2>
+        <div class="grid" id="grid-frios"></div>
+    </div>
+
+    <!-- CAMADA DE CADASTRO E FINALIZAÇÃO -->
+    <div class="checkout-bar">
+        <div class="customer-form">
+            <input type="text" id="cust-nome" placeholder="Seu Nome completo" class="full-width">
+            <input type="text" id="cust-end" placeholder="Endereço de Entrega" class="full-width">
+            <input type="tel" id="cust-tel" placeholder="Telefone/WhatsApp">
+            <select id="formaPagamento">
+                <option value="Pix">Pagto: Pix</option>
+                <option value="Cartão de Crédito">Pagto: Crédito</option>
+                <option value="Cartão de Débito">Pagto: Débito</option>
+                <option value="Dinheiro">Pagto: Dinheiro</option>
+            </select>
+        </div>
+
+        <div class="checkout-summary">
+            <div class="total-info">
+                <h4>Total (<span id="cartCount">0</span> itens)</h4>
+                <div class="total-price" id="cartTotal">R$ 0,00</div>
+            </div>
+            <button class="btn-whatsapp" onclick="sendWhatsApp()">
+                Finalizar Pedido
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // MANTENDO LISTA DE PRODUTOS INTACTA
+        const produtos = [
+            { id: 1, categoria: 'acougue', nome: 'Picanha Premium', preco: 69.99, tipo: 'kg', img: 'https://p2.trrsf.com/image/fget/cf/942/530/images.terra.com/2023/06/06/1447370316-tamanho-padrao-gc-17-1.jpg' },
+            { id: 2, categoria: 'acougue', nome: 'Contra filé Noix', preco: 72.50, tipo: 'kg', img: 'https://www.plenaalimentos.com.br/wp-content/uploads/2023/04/321201_CONTRAFILE_NOIX_TODA_HORA.png' },
+            { id: 3, categoria: 'acougue', nome: 'Contra filé Tradicional', preco: 54.99, tipo: 'kg', img: 'https://cdn.awsli.com.br/1000x1000/1561/1561317/produto/67987703/fd6497deb7.jpg' },
+            { id: 4, categoria: 'acougue', nome: 'Fraldinha Swift', preco: 42.90, tipo: 'kg', img: 'https://phygital-files.mercafacil.com/porecatu/uploads/produto/fraldinha_bovina_friboi_kg_34efa3b8-2b88-4f43-a9d5-01fe127ae1a4.png' },
+            { id: 5, categoria: 'mercearia', nome: 'Arroz Tio João 1kg', preco: 3.49, tipo: 'und', img: 'https://assets.instabuy.app.br/ib.item.image.large/l-1f9697994b494981ab3ace342d00e9be.jpeg' },
+            { id: 6, categoria: 'mercearia', nome: 'Feijão Carioca 1kg', preco: 7.49, tipo: 'und', img: 'https://assets.instabuy.app.br/ib.item.image.large/l-b15349c79e694c919b8d0e86514a5c24.jpeg' },
+            { id: 7, categoria: 'mercearia', nome: 'Macarrão Parafuso', preco: 3.49, tipo: 'und', img: 'https://espinheiros.com.br/wp-content/uploads/2024/03/Macarrao-de-Semola-Parafuso-Parati-Pacote-500g-1024x1024.png' },
+            { id: 8, categoria: 'mercearia', nome: 'Café Pilão 500g', preco: 18.90, tipo: 'und', img: 'https://medlimp.com.br/wp-content/uploads/2017/04/caf%C3%A9-pil%C3%A3o-almofada-tradicional.png' },
+            { id: 15, categoria: 'mercearia', nome: 'Açúcar Cristal 1kg', preco: 4.20, tipo: 'und', img: 'https://utlimp.com.br/wp-content/uploads/2025/02/Acucar-2kg.png' },
+            { id: 9, categoria: 'limpeza', nome: 'Pinho Sol 500ml', preco: 7.99, tipo: 'und', img: 'https://m.media-amazon.com/images/I/51Jy3Et3WkL.jpg' },
+            { id: 10, categoria: 'limpeza', nome: 'Amaciante Comfort', preco: 8.99, tipo: 'und', img: 'https://images.colombo.com.br/produtos/4487877/4487877_Amaciante_Concentrado_Comfort_Cuidado_Essencial_900ml_12581055_z.jpg' },
+            { id: 11, categoria: 'limpeza', nome: 'Água Sanitária', preco: 6.99, tipo: 'und', img: 'https://bompreco.vtexassets.com/arquivos/ids/198896/aguasanitariariobahiafrasco1l7896394804255.jpg' },
+            { id: 12, categoria: 'frios', nome: 'Pizza Congelada', preco: 15.99, tipo: 'und', img: 'https://static.paodeacucar.com/img/uploads/1/192/24541192.jpg' },
+            { id: 13, categoria: 'frios', nome: 'Pão de Queijo 820g', preco: 10.99, tipo: 'und', img: 'https://savegnagoio.vtexassets.com/arquivos/ids/385527/PaodeQueijocongeladoLanche820g1.jpg' },
+            { id: 14, categoria: 'frios', nome: 'Lasanha 350g', preco: 21.99, tipo: 'und', img: 'https://carrefourbrfood.vtexassets.com/arquivos/ids/151984544/lasanha-a-bolonhesa-com-molho-vermelho-sadia-350g-1.jpg' }
+        ];
+
+        let cart = [];
+        const state = {};
+        
+        /* TAXA DE ENTREGA: 
+        Alguns estabelecimentos não cobram entrega. 
+        Para ativar, altere o valor abaixo.
+        */
+        const TAXA_ENTREGA = 0.00; // Exemplo: 5.00 para cobrar 5 reais
+
+        function init() {
+            produtos.forEach(p => {
+                state[p.id] = p.tipo === 'kg' ? 0.5 : 1;
+                renderCard(p);
+            });
+        }
+
+        function renderCard(p) {
+            const container = document.getElementById(`grid-${p.categoria}`);
+            const step = p.tipo === 'kg' ? 0.5 : 1;
+            const inicial = state[p.id];
+
+            const html = `
+                <div class="card" id="card-${p.id}">
+                    <img src="${p.img}" alt="${p.nome}" onerror="this.src='https://placehold.co/150x150?text=Sem+Imagem'">
+                    <h3>${p.nome}</h3>
+                    <div class="preco-box" id="display-price-${p.id}">R$ ${(p.preco * inicial).toFixed(2).replace('.', ',')}</div>
+                    
+                    <div class="qty-control">
+                        <button class="btn-qty" onclick="changeQty(${p.id}, -${step})">-</button>
+                        <input type="text" class="qty-input" id="input-${p.id}" value="${inicial.toFixed(p.tipo === 'kg' ? 3 : 0)}" readonly>
+                        <button class="btn-qty" onclick="changeQty(${p.id}, ${step})">+</button>
+                    </div>
+
+                    <button class="btn-add" onclick="addToCart(${p.id})">Adicionar</button>
+                </div>
+            `;
+            container.innerHTML += html;
+        }
+
+        function changeQty(id, delta) {
+            const p = produtos.find(x => x.id === id);
+            const step = p.tipo === 'kg' ? 0.5 : 1;
+            let current = state[id];
+            current += delta;
+            if (current < step) current = step;
+            state[id] = current;
+            document.getElementById(`input-${id}`).value = current.toFixed(p.tipo === 'kg' ? 3 : 0);
+            document.getElementById(`display-price-${id}`).innerText = `R$ ${(p.preco * current).toFixed(2).replace('.', ',')}`;
+        }
+
+        function addToCart(id) {
+            const p = produtos.find(x => x.id === id);
+            const qty = state[id];
+            cart.push({ nome: p.nome, qty: qty, tipo: p.tipo, total: p.preco * qty, precoBase: p.preco });
+            updateCartTotal();
+        }
+
+        function updateCartTotal() {
+            const totalProdutos = cart.reduce((acc, item) => acc + item.total, 0);
+            const totalGeral = totalProdutos + TAXA_ENTREGA;
+            document.getElementById('cartCount').innerText = cart.length;
+            document.getElementById('cartTotal').innerText = `R$ ${totalGeral.toFixed(2).replace('.', ',')}`;
+        }
+
+        function sendWhatsApp() {
+            if (cart.length === 0) return alert("Adicione itens ao carrinho primeiro!");
+            
+            // Validação de Cadastro
+            const nome = document.getElementById('cust-nome').value;
+            const endereco = document.getElementById('cust-end').value;
+            const telefone = document.getElementById('cust-tel').value;
+            const formaPagto = document.getElementById('formaPagamento').value;
+
+            if (!nome || !endereco || !telefone) {
+                return alert("Por favor, preencha seu Nome, Endereço e Telefone.");
+            }
+
+            const phone = "558399999999";
+            const agora = new Date().toLocaleString('pt-BR');
+            const numPedido = Math.floor(Math.random() * 9000) + 1000;
+
+            let msg = "```"; 
+            msg += "   SUPERMERCADO ALEGRIA LTDA\n";
+            msg += "  RUA DO COMERCIO, 123 - CENTRO\n";
+            msg += "      JOAO PESSOA - PARAIBA\n";
+            msg += "--------------------------------\n";
+            msg += "    DANFE NFC-e - Relatório\n";
+            msg += "      Auxiliar de Pedido\n";
+            msg += "--------------------------------\n";
+            msg += "ITEM COD DESC QTD UN VL.UN VL.TOT\n";
+            msg += "--------------------------------\n";
+
+            cart.forEach((item, index) => {
+                const idStr = (index + 1).toString().padStart(3, '0');
+                const desc = item.nome.substring(0, 10).toUpperCase().padEnd(10, ' ');
+                const qty = item.qty.toFixed(item.tipo === 'kg' ? 3 : 0).toString().padStart(4, ' ');
+                const un = item.tipo.toUpperCase().padEnd(2, ' ');
+                const vUn = item.precoBase.toFixed(2).padStart(6, ' ');
+                const vTot = item.total.toFixed(2).padStart(7, ' ');
+                msg += `${idStr} ${desc} ${qty}${un} ${vUn} ${vTot}\n`;
+            });
+
+            const totalProdutos = cart.reduce((acc, item) => acc + item.total, 0);
+            const totalFinal = totalProdutos + TAXA_ENTREGA;
+
+            msg += "--------------------------------\n";
+            msg += `SUBTOTAL R$                 ${totalProdutos.toFixed(2).padStart(7, ' ')}\n`;
+            msg += `TAXA ENTREGA R$             ${TAXA_ENTREGA.toFixed(2).padStart(7, ' ')}\n`;
+            msg += `VALOR TOTAL R$              ${totalFinal.toFixed(2).padStart(7, ' ')}\n`;
+            msg += "--------------------------------\n";
+            msg += "FORMA PAGAMENTO         VALOR PAGO\n";
+            msg += `${formaPagto.padEnd(20, ' ')} ${totalFinal.toFixed(2).padStart(7, ' ')}\n`;
+            msg += "--------------------------------\n";
+            msg += "CLIENTE: " + nome.toUpperCase() + "\n";
+            msg += "END: " + endereco.toUpperCase() + "\n";
+            msg += "TEL: " + telefone + "\n";
+            msg += "--------------------------------\n";
+            msg += `Pagamento será feito: ${formaPagto.toUpperCase()}\n`;
+            msg += "--------------------------------\n";
+            msg += `Emissão: ${agora}\n`;
+            msg += `Pedido No: ${numPedido}\n`;
+            msg += "--------------------------------\n";
+            msg += "   OBRIGADO PELA PREFERENCIA!\n";
+            msg += "```";
+
+            window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        init();
+    </script>
+</body>
+</html>
