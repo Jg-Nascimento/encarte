@@ -476,7 +476,7 @@
             cart.forEach(i => msg += `- ${i.nome}: ${i.qty}${i.tipo} (R$ ${i.total.toFixed(2)})\n`);
             msg += `\n*TOTAL: ${document.getElementById('cartTotal').innerText}*`;
             
-            window.open(`https://api.whatsapp.com/send?phone=558399999999&text=${encodeURIComponent(msg)}`, '_blank');
+            window.open(`https://api.whatsapp.com/send?phone=5583991438527&text=${encodeURIComponent(msg)}`, '_blank');
             closeModal('modalOrder');
         }
 
